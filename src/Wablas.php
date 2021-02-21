@@ -20,6 +20,12 @@ class Wablas
         return $this->domain_api;
     }
 
+    public function getInfo()
+    {
+        $url    = $this->domain_api . "/api/device/info?token=" . $this->token;
+        return $this->_curlGet($url);
+    }
+
     public function sendMessage($to, $msg)
     {
         $data = [
@@ -30,7 +36,7 @@ class Wablas
         ];
 
         $url    = $this->domain_api . "/api/send-message";
-        return $this->_curl($url, $data);
+        return $this->_curlPost($url, $data);
     }
 
 
@@ -39,7 +45,7 @@ class Wablas
 
 
 
-    private function _curl($url, $data)
+    private function _curlPost($url, $data)
     {
         $curl = curl_init();
         curl_setopt(
@@ -58,8 +64,19 @@ class Wablas
         $result = curl_exec($curl);
         curl_close($curl);
 
-        // echo "<pre>";
-        // print_r($result);
+        return $result;
+    }
+
+    private function _curlGet($url)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+        $result = curl_exec($curl);
+        curl_close($curl);
         return $result;
     }
 }
