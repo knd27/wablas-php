@@ -8,6 +8,7 @@
             "email": "kannyd@gmail.com"
         }
     ],
+    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {"knd27\\Wablas\\": "src/"}
     },
