@@ -1,11 +1,15 @@
 {
     "name": "knd27/wablas-php",
     "description": "(Unofficial) Wablas PHP Client",
+    "license": "MIT",
     "authors": [
         {
             "name": "kannyd",
             "email": "kannyd@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {"knd27\\Wablas\\": "src/"}
+    },
     "require": {}
 }
