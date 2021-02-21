@@ -26,16 +26,35 @@ class Wablas
         return $this->_curlGet($url);
     }
 
+    public function restartDevice()
+    {
+        $url    = $this->domain_api . "/api/device/reconnect?token=" . $this->token;
+        return $this->_curlGet($url);
+    }
+
     public function sendMessage($to, $msg)
     {
         $data = [
-            'phone' => $to,
-            'message' => $msg,
-            'secret' => true, // or true
-            'priority' => false, // or true
+            'phone'     => $to,
+            'message'   => $msg,
+            'secret'    => true, // or true
+            'priority'  => false, // or true
         ];
 
         $url    = $this->domain_api . "/api/send-message";
+        return $this->_curlPost($url, $data);
+    }
+
+    public function sendImage($to, $imageurl, $caption = null)
+    {
+        $data = [
+            'phone'     => $to,
+            'caption'   => $caption,
+            'image'     => $imageurl,
+            'secret'    => false, // or true
+            'priority'  => false, // or true
+        ];
+        $url    = $this->domain_api . "/api/send-image";
         return $this->_curlPost($url, $data);
     }
 
