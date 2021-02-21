@@ -20,6 +20,25 @@ class Wablas
         return $this->domain_api;
     }
 
+    public function sendMessage($to, $msg)
+    {
+        $data = [
+            'phone' => $to,
+            'message' => $msg,
+            'secret' => true, // or true
+            'priority' => false, // or true
+        ];
+
+        $url    = $this->domain_api . "/api/send-message";
+        return $this->_curl($url, $data);
+    }
+
+
+
+
+
+
+
     private function _curl($url, $data)
     {
         $curl = curl_init();
@@ -39,7 +58,8 @@ class Wablas
         $result = curl_exec($curl);
         curl_close($curl);
 
-        echo "<pre>";
-        print_r($result);
+        // echo "<pre>";
+        // print_r($result);
+        return $result;
     }
 }
