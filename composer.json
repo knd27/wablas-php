@@ -1,0 +1,11 @@
+{
+    "name": "knd27/wablas-php",
+    "description": "(Unofficial) Wablas PHP Client",
+    "authors": [
+        {
+            "name": "kannyd",
+            "email": "kannyd@gmail.com"
+        }
+    ],
+    "require": {}
+}
