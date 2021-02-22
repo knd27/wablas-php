@@ -8,7 +8,7 @@ use GuzzleHttp\RequestOptions;
 class Wablas
 {
     protected $token;
-    protected $domain_api = "https://cepogo.wablas.com/api";
+    protected $domain_api = "https://cepogo.wablas.com";
     protected $recipients = [];
     protected $httpClient;
     protected $headers;
@@ -44,7 +44,7 @@ class Wablas
     public function sendMessage($message, $type = 'random')
     {
         if (!empty($this->recipients)) {
-            $res = $this->httpClient->post('/send-message', [
+            $res = $this->httpClient->post('/api/send-message', [
                 RequestOptions::HEADERS => $this->headers,
                 RequestOptions::FORM_PARAMS => [
                     'phone'     => implode(", ", $this->recipients),
@@ -60,8 +60,9 @@ class Wablas
 
     public function getInfo()
     {
-        $url    = $this->domain_api . "/api/device/info?token=" . $this->token;
-        return $this->_curlGet($url);
+        $url    = "/api/device/info?token=" . $this->token;
+        $res = $this->httpClient->get($url);
+        return $res;
     }
 
     public function restartDevice()
