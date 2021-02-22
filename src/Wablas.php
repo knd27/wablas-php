@@ -2,10 +2,17 @@
 
 namespace knd27\Wablas;
 
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\RequestOptions;
+
 class Wablas
 {
     protected $token;
-    protected $domain_api = "https://cepogo.wablas.com";
+    protected $domain_api = "https://cepogo.wablas.com/api";
+    protected $recipients = [];
+    protected $httpClient;
+    protected $headers;
+
 
     public function __construct($token, $domain_api = null)
     {
@@ -13,11 +20,42 @@ class Wablas
         if (isset($domain_api)) {
             $this->domain_api   = $domain_api;
         }
+
+        $this->headers = [
+            'Accept' => 'application/json',
+            'Authorization' => $this->token,
+        ];
+
+        $this->httpClient = new GuzzleClient([
+            'base_uri' => $this->domain_api
+        ]);
+    }
+
+    public function addRecipient($phoneNumber)
+    {
+        $this->recipients[] = $phoneNumber;
     }
 
     public function tes()
     {
         return $this->domain_api;
+    }
+
+    public function sendMessage($message, $type = 'random')
+    {
+        if (!empty($this->recipients)) {
+            $res = $this->httpClient->post('/send-message', [
+                RequestOptions::HEADERS => $this->headers,
+                RequestOptions::FORM_PARAMS => [
+                    'phone'     => implode(", ", $this->recipients),
+                    'message'   => $message,
+                    'type'      => $type
+                ],
+            ]);
+
+            return $res->getBody();
+        }
+        return false;
     }
 
     public function getInfo()
@@ -32,7 +70,7 @@ class Wablas
         return $this->_curlGet($url);
     }
 
-    public function sendMessage($to, $msg)
+    public function sendMessage1($to, $msg)
     {
         $data = [
             'phone'     => $to,

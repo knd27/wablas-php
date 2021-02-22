@@ -2,6 +2,7 @@
     "name": "knd27/wablas-php",
     "description": "(Unofficial) Wablas PHP Client",
     "license": "MIT",
+    "type": "library",
     "authors": [
         {
             "name": "kannyd",
@@ -9,8 +10,10 @@
         }
     ],
     "minimum-stability": "dev",
+    "require": {
+        "guzzlehttp/guzzle": "^7.0"
+    },
     "autoload": {
         "psr-4": {"knd27\\Wablas\\": "src/"}
-    },
-    "require": {}
+    }
 }
