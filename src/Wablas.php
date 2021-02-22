@@ -54,9 +54,9 @@ class Wablas
         $data   = json_decode($this->getInfo());
         $res = [
             'project_id'    => $data->data->project_id,
-            'quota'         => $data->data->quota,
-            'expired'       => $data->data->expired,
-            'status'        => $data->data->status,
+            'quota'         => $data->data->whatsapp->quota,
+            'expired'       => $data->data->whatsapp->expired,
+            'status'        => $data->data->whatsapp->status,
         ];
         return $res;
     }
@@ -101,44 +101,20 @@ class Wablas
         return false;
     }
 
-
-
-
-
-
-
-    private function _curlPost($url, $data)
+    public function sendDocument($docUrl)
     {
-        $curl = curl_init();
-        curl_setopt(
-            $curl,
-            CURLOPT_HTTPHEADER,
-            array(
-                "Authorization: " . $this->token,
-            )
-        );
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-        $result = curl_exec($curl);
-        curl_close($curl);
-
-        return $result;
-    }
-
-    private function _curlGet($url)
-    {
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-        $result = curl_exec($curl);
-        curl_close($curl);
-        return $result;
+        if (!empty($this->recipients)) {
+            $res = $this->httpClient->post('/api/send-document', [
+                RequestOptions::HEADERS => $this->headers,
+                RequestOptions::FORM_PARAMS => [
+                    'phone'     => implode(", ", $this->recipients),
+                    'document'  => $docUrl,
+                    'secret'    => false, // or true
+                    'priority'  => false, // or true
+                ],
+            ]);
+            return $res->getBody();
+        }
+        return false;
     }
 }
