@@ -41,6 +41,33 @@ class Wablas
         return $this->domain_api;
     }
 
+
+    public function getInfo()
+    {
+        $url    = "/api/device/info?token=" . $this->token;
+        $res = $this->httpClient->get($url);
+        return $res->getBody();
+    }
+
+    public function getInfoWa()
+    {
+        $data   = json_decode($this->getInfo());
+        $res = [
+            'project_id'    => $data->data->project_id,
+            'quota'         => $data->data->quota,
+            'expired'       => $data->data->expired,
+            'status'        => $data->data->status,
+        ];
+        return $res;
+    }
+
+    public function restartDevice()
+    {
+        $url    = "/api/device/reconnect?token=" . $this->token;
+        $res = $this->httpClient->get($url);
+        return $res->getBody();
+    }
+
     public function sendMessage($message, $type = 'random')
     {
         if (!empty($this->recipients)) {
@@ -58,43 +85,20 @@ class Wablas
         return false;
     }
 
-    public function getInfo()
+    public function sendImage($imageCaption, $imageUrl)
     {
-        $url    = "/api/device/info?token=" . $this->token;
-        $res = $this->httpClient->get($url);
-        return $res;
-    }
-
-    public function restartDevice()
-    {
-        $url    = $this->domain_api . "/api/device/reconnect?token=" . $this->token;
-        return $this->_curlGet($url);
-    }
-
-    public function sendMessage1($to, $msg)
-    {
-        $data = [
-            'phone'     => $to,
-            'message'   => $msg,
-            'secret'    => true, // or true
-            'priority'  => false, // or true
-        ];
-
-        $url    = $this->domain_api . "/api/send-message";
-        return $this->_curlPost($url, $data);
-    }
-
-    public function sendImage($to, $imageurl, $caption = null)
-    {
-        $data = [
-            'phone'     => $to,
-            'caption'   => $caption,
-            'image'     => $imageurl,
-            'secret'    => false, // or true
-            'priority'  => false, // or true
-        ];
-        $url    = $this->domain_api . "/api/send-image";
-        return $this->_curlPost($url, $data);
+        if (!empty($this->recipients)) {
+            $res = $this->httpClient->post('/api/send-image', [
+                RequestOptions::HEADERS => $this->headers,
+                RequestOptions::FORM_PARAMS => [
+                    'phone'     => implode(", ", $this->recipients),
+                    'caption'   => $imageCaption,
+                    'image'     => $imageUrl,
+                ],
+            ]);
+            return $res->getBody();
+        }
+        return false;
     }
 
 
